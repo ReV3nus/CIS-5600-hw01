@@ -49,14 +49,17 @@ const controls = {
 //let cube: Cube;
 let fireBall: Icosphere;
 let fireSphere : Icosphere;
+let bgSquare: Square;
 
 let prevSize: number = 0;
 
 function loadScene() {
-  fireBall =new Icosphere(vec3.fromValues(0, 0, 0), controls.size, controls.tesselations);
+  fireBall = new Icosphere(vec3.fromValues(0, 0, 0), controls.size, controls.tesselations);
   fireBall.create();
-  fireSphere =new Icosphere(vec3.fromValues(0, 0, 0), controls.size * 1.01, controls.tesselations);
+  fireSphere = new Icosphere(vec3.fromValues(0, 0, 0), controls.size * 1.01, controls.tesselations);
   fireSphere.create();
+  bgSquare = new Square(vec3.fromValues(0, 0, 0));
+  bgSquare.create();
 }
 
 
@@ -170,43 +173,6 @@ function generate3DNoise(gl: WebGL2RenderingContext, size: number): WebGLTexture
   return tex;
 }
 
-function generate2DNoise(gl: WebGL2RenderingContext, size: number): WebGLTexture 
-{
-  const data = new Uint8Array(size * size);
-
-  for (let i = 0; i < size; i++) {
-    for (let j = 0; j < size; j++) {
-        const idx = i * size + j;
-        data[idx] = Math.random() * 255;
-    }
-  }
-
-  const tex = gl.createTexture();
-  gl.bindTexture(gl.TEXTURE_2D, tex);
-
-  gl.texParameteri(gl.TEXTURE_3D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-  gl.texParameteri(gl.TEXTURE_3D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-  gl.texParameteri(gl.TEXTURE_3D, gl.TEXTURE_WRAP_S, gl.REPEAT);
-  gl.texParameteri(gl.TEXTURE_3D, gl.TEXTURE_WRAP_T, gl.REPEAT);
-  gl.texParameteri(gl.TEXTURE_3D, gl.TEXTURE_WRAP_R, gl.REPEAT);
-
-  gl.texImage2D(
-    gl.TEXTURE_2D,
-    0,                // mip level
-    gl.R8,
-    size, size, 
-    0,
-    gl.RED,
-    gl.UNSIGNED_BYTE,
-    data
-  ); // got error when set to R32F and FLoat
-
-  gl.bindTexture(gl.TEXTURE_3D, null);
-
-  return tex;
-}
-
-
 function main() {
   // Initial display for framerate
   const stats = Stats();
@@ -271,6 +237,10 @@ function main() {
     new Shader(gl.VERTEX_SHADER, require('./shaders/fire-vert.glsl')),
     new Shader(gl.FRAGMENT_SHADER, require('./shaders/fire-frag.glsl')),
   ]);
+  const backgroundShader = new ShaderProgram([
+    new Shader(gl.VERTEX_SHADER, require('./shaders/background-vert.glsl')),
+    new Shader(gl.FRAGMENT_SHADER, require('./shaders/background-frag.glsl')),
+  ]);
 
 
   const noiseTex = generate3DNoise(gl, controls.noiseSize3D);
@@ -328,6 +298,13 @@ function main() {
     fireShader.setBassLevel(bassLevel);
     magmaShader.setMagmaParams(controls, performance.now() * 0.001);
     fireShader.setFireParams(controls, performance.now() * 0.001);
+
+    gl.disable(gl.DEPTH_TEST);
+    backgroundShader.setResolution(window.innerWidth, window.innerHeight);
+    renderer.render(camera, backgroundShader, [
+      bgSquare
+    ], vec4Color);
+    gl.enable(gl.DEPTH_TEST);
 
     renderer.render(camera, magmaShader, [
       fireBall
