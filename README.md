@@ -15,4 +15,4 @@ Get comfortable with using WebGL and its shaders to generate an interesting 3D, 
 
 <img width="2138" height="1468" alt="image" src="https://github.com/user-attachments/assets/c03a6a56-fdcc-4ddc-8386-e60d4f0d05c2" />
 
-[demo](https://rev3nus.github.io/CIS-5600-hw01/)
+[demo](https://rev3nus.github.io/CIS-5660-hw01/)
