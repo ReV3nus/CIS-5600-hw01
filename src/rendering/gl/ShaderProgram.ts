@@ -234,7 +234,7 @@ class ShaderProgram {
     if (this.unif_gradRot != -1)
     {
       let vec = controls.gradRot.match(/-?\d+(\.\d+)?/g).map(Number);
-      gl.uniform4f(this.unif_gradRot, vec[0], vec[1], vec[2], vec[4]);
+      gl.uniform4f(this.unif_gradRot, vec[0], vec[1], vec[2], vec[3]);
     }
   }
   setFireParams(controls: any, time: number)

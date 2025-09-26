@@ -1,0 +1,11 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\src",
+    "\\src\\geometry",
+    "\\src\\rendering",
+    "\\src\\rendering\\gl"
+  ],
+  "SelectedNode": "\\src\\rendering\\gl\\ShaderProgram.ts",
+  "PreviewInSolutionExplorer": false
+}
